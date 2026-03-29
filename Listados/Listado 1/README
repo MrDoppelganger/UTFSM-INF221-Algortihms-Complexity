@@ -1,0 +1,77 @@
+===========================================================================================================
+                                                  Listado 1
+
+===========================================================================================================
+Nombre: Vicente Rodríguez Rogers		21.303.222-4	202273503-1	
+Fecha:  Marzo-2026
+-----------------------------------------------------------------------------------------------------------
+
+[Herramientas Utilizadas]
+
+-----------------------------------------------------------------------------------------------------------
+-Visual studio code
+-----------------------------------------------------------------------------------------------------------
+
+[Ambiente de Ejecución Usado]
+
+-----------------------------------------------------------------------------------------------------------
+- Sistema Operativo usado: Ubuntu 22.04.5 LTS
+- Lenguaje: C++
+-----------------------------------------------------------------------------------------------------------
+
+[Desarrollo de desafios]
+
+-----------------------------------------------------------------------------------------------------------
+=====Desafio 1: Game Of throne
+
+Descripcion:
+    El problema plantea un juego donde un grupo de n niños, sentados en círculo y numerados del 0 al n−1, 
+se pasan un huevo de dragón siguiendo las instrucciones de una profesora. El juego comienza siempre con el 
+niño 0 sosteniendo el huevo. Existen dos tipos de comandos: un número entero que indica cuántas posiciones 
+debe moverse el huevo (en sentido horario si es positivo o antihorario si es negativo, dando vueltas al 
+círculo si es necesario), y la instrucción "undo m", que deshace los últimos m lanzamientos realizados. Es
+importante notar que la instrucción de deshacer solo afecta a los lanzamientos directos y no a otros 
+comandos "undo" previos. El objetivo es determinar la posición final del huevo tras procesar toda la 
+secuencia de órdenes.
+
+Entrada:
+    La primera línea contiene dos enteros positivos: n (el número de niños, entre 1 y 30) y k (la cantidad 
+de comandos, entre 1 y 100). La segunda línea contiene los k comandos, que pueden ser números enteros 
+entre −10,000 y 10,000 o la frase "undo m", donde m es la cantidad de movimientos previos a revertir. 
+Se garantiza que nunca se pedirá deshacer más movimientos de los que se han realizado desde el inicio del 
+juego.
+
+Salida:
+    El programa debe imprimir un único número entero que represente el número identificador del niño que 
+tiene el huevo en su poder una vez ejecutados correctamente todos los comandos de la lista.
+
+=====Desafio 2: Bungee builder
+
+Descripcion:
+    El objetivo es determinar la máxima distancia de caída para una nueva atracción de bungee jumping que se
+ubicará sobre un puente horizontal tendido entre dos montañas de una cordillera. Para que el puente sea 
+válido, debe conectar dos cimas distintas y su altura no puede superar la menor de las dos montañas que lo
+sostienen; además, el puente debe estar estrictamente por encima de todas las montañas que se encuentren en
+el intervalo entre ambas. La distancia de salto se calcula como la diferencia vertical entre la altura del 
+puente y la cima de la montaña más baja que se encuentre directamente debajo de él, por lo que el desafío 
+consiste en encontrar la combinación de montañas que permita maximizar este espacio libre para el salto.
+
+Entrada:
+    El programa recibe como primer dato un número entero N, que representa la cantidad total de montañas en 
+la secuencia, pudiendo llegar hasta un millón (106). A continuación, se proporciona una lista de N números 
+enteros, donde cada valor Hi​ corresponde a la altura de la i-ésima montaña, con valores que pueden alcanzar 
+hasta 109.
+
+Salida:
+    La salida debe ser un único número entero que represente la mayor distancia de salto vertical que se 
+puede lograr bajo las restricciones de construcción mencionadas. En el caso de que la configuración de las 
+montañas no permita construir ningún puente válido, el valor de la salida deberá ser cero.
+
+-----------------------------------------------------------------------------------------------------------
+
+[Consideraciones]
+
+-----------------------------------------------------------------------------------------------------------
+-Se realizo un primer intento para Bungee builder que resulto ser una solucion valida, pero con una
+complejidad de O(n²), asi que su tiempo de ejecución se iba a disparar en los casos de pruebas asi que se 
+realizo un segundo programa que solucionaba esta complejidad.
