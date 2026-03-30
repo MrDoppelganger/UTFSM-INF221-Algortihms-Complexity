@@ -5,7 +5,8 @@
 
 using namespace std;
 
-int main() {
+int main() 
+{
     //------------------Inicializacion---------------------------
     // Optimización para que cin/cout sean mucho más rápidos
     ios_base::sync_with_stdio(false);
