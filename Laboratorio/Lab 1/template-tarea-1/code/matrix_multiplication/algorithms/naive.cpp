@@ -1,52 +1,27 @@
 #include <iostream>
 #include <vector>
-
 using namespace std;
 
-// Definimos un alias para facilitar la lectura de matrices
-typedef vector<vector<int>> Matrix;
+void mulMat(vector<vector<int>>& m1, vector<vector<int>>& m2, 
+            vector<vector<int>>& res) {
+    int r1 = m1.size();
+    int c1 = m1[0].size();
+    int r2 = m2.size();
+    int c2 = m2[0].size();
 
-/**
- * Multiplicación de Matrices (Método Naive)
- * @param A: Matriz izquierda
- * @param B: Matriz derecha
- * @return La matriz resultante C = A * B
- */
-Matrix multiplyNaive(const Matrix& A, const Matrix& B) {
-    int filasA = A.size();
-    int columnasA = A[0].size();
-    int columnasB = B[0].size();
+    if (c1 != r2) {
+        cout << "Invalid Input" << endl;
+        exit(EXIT_FAILURE);
+    }
 
-    // Inicializamos la matriz resultante C con ceros
-    // Tamaño: filas de A x columnas de B
-    Matrix C(filasA, vector<int>(columnasB, 0));
-
-    // El triple bucle anidado clásico
-    for (int i = 0; i < filasA; i++) {           // Recorre filas de A
-        for (int j = 0; j < columnasB; j++) {     // Recorre columnas de B
-            for (int k = 0; k < columnasA; k++) { // Realiza el producto punto
-                C[i][j] += A[i][k] * B[k][j];
+    // Resize result matrix to fit the result dimensions
+    res.resize(r1, vector<int>(c2, 0)); 
+  
+    for (int i = 0; i < r1; i++) {
+        for (int j = 0; j < c2; j++) {
+            for (int k = 0; k < c1; k++) {
+                res[i][j] += m1[i][k] * m2[k][j];
             }
         }
     }
-
-    return C;
-}
-
-int main() {
-    // Ejemplo rápido 2x2
-    Matrix A = {{1, 2}, {3, 4}};
-    Matrix B = {{5, 6}, {7, 8}};
-
-    Matrix resultado = multiplyNaive(A, B);
-
-    cout << "Resultado de la multiplicacion naive:" << endl;
-    for (const auto& fila : resultado) {
-        for (int val : fila) {
-            cout << val << " ";
-        }
-        cout << endl;
-    }
-
-    return 0;
 }
