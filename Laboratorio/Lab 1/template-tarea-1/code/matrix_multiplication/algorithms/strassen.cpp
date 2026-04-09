@@ -159,16 +159,16 @@ void ConvertToSquareMat(vii &A, vii &B, int r1, int c1, int r2, int c2)
     vi z(size);
     vii Aa(size, z), Bb(size, z), Cc(size, z);
 
-    for (unsigned int i = 0; i < r1; i++)
+    for (int i = 0; i < r1; i++)
     {
-        for (unsigned int j = 0; j < c1; j++)
+        for (int j = 0; j < c1; j++)
         {
             Aa[i][j] = A[i][j];
         }
     }
-    for (unsigned int i = 0; i < r2; i++)
+    for (int i = 0; i < r2; i++)
     {
-        for (unsigned int j = 0; j < c2; j++)
+        for (int j = 0; j < c2; j++)
         {
             Bb[i][j] = B[i][j];
         }
@@ -176,9 +176,9 @@ void ConvertToSquareMat(vii &A, vii &B, int r1, int c1, int r2, int c2)
     Strassen_algorithm(Aa, Bb, Cc, size);
     vi temp1(c2);
     vii C(r1, temp1);
-    for (unsigned int i = 0; i < r1; i++)
+    for (int i = 0; i < r1; i++)
     {
-        for (unsigned int j = 0; j < c2; j++)
+        for (int j = 0; j < c2; j++)
         {
             C[i][j] = Cc[i][j];
         }
