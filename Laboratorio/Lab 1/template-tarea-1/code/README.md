@@ -2,7 +2,7 @@
 #                                         Documentación
 
 ===========================================================================================================
-Nombre: Vicente Rodríguez Rogers		21.303.222-4	202273503-1	
+Nombre: Vicente Rodríguez Rogers        21.303.222-4    202273503-1 
 Fecha:  abril-2026
 -----------------------------------------------------------------------------------------------------------
 
@@ -23,6 +23,22 @@ Fecha:  abril-2026
 
 -----------------------------------------------------------------------------------------------------------
 La entrega se realiza vía **aula.usm.cl** en formato `.zip`.
+
+-----------------------------------------------------------------------------------------------------------
+
+# [Compilación]
+
+-----------------------------------------------------------------------------------------------------------
+ - **Fabricacion de estado inicial**: Hay que generar los archivos en donde se va a ejecutar todo los 
+ algorimtos, por lo que desde la consola nos ubicamos en la carpeta script (hay que hacerlo en ambas carpetas),
+ y ejecutamos el comando de python para correr array_generator.py/matrix_generator.py y asi generar las 
+ entradas
+ - **Ejecucion de algoritmos**: Hay que crear los archivos  de lenguaje maquina con el "make" en la terminal
+ por lo que se requiere que se vaya a la carpetas sorting y matrix_multiplication para ejecutar el comando
+ y realizar el "make run" para obtener los datos de ejecucion que se guardara en los respectivo measurement.
+ 
+ - **Analisis de datos**: luego de rellenar el .csv, ejecuta los codigos de plot_generation ubicados en cada 
+ carpeta(sortin y matrix_multiplication), con los que se obtendran los datos para su posterior analisis
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -113,15 +129,16 @@ y como el contexto lo permite, para ahorranos esos warning fueron trasnforamdos 
 ## [Programa_principal]
 
 -----------------------------------------------------------------------------------------------------------
-### Algorimtos:
+### Algoritmos:
 - **matrix_multiplication.cpp**: Este programa es el encargado de ejecutar los experimentos de multiplicación
 de matrices. Recibe como argumentos el algoritmo a utilizar (naive o strassen), las rutas de las dos matrices 
 de entrada, el archivo de salida para el resultado y el archivo CSV para registrar las métricas de tiempo y 
 memoria. Esta especificamente diseñado para un trabajo directo con los datos de una sola ejecución.
--**Makefile**: En esta situación el make file tiene una funcion importante a la hora de aplicar los 
+- **Makefile**: En esta situación el make file tiene una funcion importante a la hora de aplicar los 
 algoritmos, ya que ademas de conectar con todo los documentos para su correcto funcionamiento, tambien se 
 encarga de realizar la iteracion de llamados al codigo 'matrix_multiplication.cpp' para mejorar en eficiencia
 todo el sistema y permitir que este ultimo se centre a trabajos puntuales. 
+
 ### Resultados:
 - Los resultados del algoritmo son guardados en un "results.csv" en donde se almacena tanto la velocidad del
 algoritmo, como el tamaño en memoria que utilizo. estos datos seran graficados con el script 
@@ -136,8 +153,11 @@ scripts/matriz_generator.py
 ## [Scripts]
 
 -----------------------------------------------------------------------------------------------------------
-- **`scripts/matrix_generator.py`**: Genera pares de matrices cuadradas aleatorias de dimensiones $2^4$ a $2^{10}$ con diferentes tipos (densas, diagonales, dispersas) y dominios de valores.
-- **`scripts/plot_generator.py`**: Procesa los resultados de las mediciones y genera gráficos comparativos para el análisis de complejidad experimental.
+- **scripts/matrix_generator.py**: Script que automatiza la creación de matrices cuadradas aleatorias con 
+dimensiones de 2^4 a 2^10. Permite configurar la densidad (densa, diagonal o dispersa) y el rango de valores, 
+rellenando con ceros hasta la potencia de 2 más cercana para asegurar la compatibilidad con Strassen.
+- **scripts/plot_generator.py**: Procesa los resultados de las mediciones del archivo CSV y genera gráficos 
+comparativos de tiempo y memoria, permitiendo visualizar el "punto de cruce" y la complejidad experimental.
 -----------------------------------------------------------------------------------------------------------
 
 # [Ordenamiento_de_arreglo_unidimensional]
@@ -200,7 +220,7 @@ scripts/matriz_generator.py
     #### Parameter:
         vector<int>& arr: es el arreglo que se busca ordenar
     #### Return:
-        vector<int>:  retorna el arreglo ordenado.
+        vector<int>: retorna el arreglo ordenado.
 
 ### Consideraciones:
 - Tanto el algoritmo MargeSort como QuickSort fueron obtenidos de la pagina www.geeksforgeeks.org
@@ -209,14 +229,36 @@ scripts/matriz_generator.py
 ## [Programa_principal]
 
 -----------------------------------------------------------------------------------------------------------
-- **`code/sorting/sorting.cpp`**: Este programa ejecuta los experimentos de ordenamiento de arreglos. Permite seleccionar entre mergesort, quicksort y std::sort. Mide el tiempo de ejecución y el uso de memoria RAM (RSS) para arreglos de hasta $10^7$ elementos.
+### Algoritmos:
+- **sorting.cpp**: Programa central en donde se ejecuta individualmente un solo algoritmo de los 3 que se 
+tiene para realiazar estos ordenamientos, dicho algoritmo es pasado como parametro con el fin de tener un
+codigo eficiente y directo. Ademas recive la listas de valores que se espera ordenar. y al terminar guarda
+el resultado.
+- **Makefile**: Es de vital importancia para la correcta ejecución, ya que ademas de encargarse de conectar
+todo los codigos, tambien itera cada archivo .txt de la carpeta de inputs, y los va resolviendo con todo los
+algoritmos que se posee
+
+### Resultados:
+- Los resultados del algoritmo son guardados en un "results.csv" en donde se almacena tanto la velocidad del
+algoritmo, como el tamaño en memoria que utilizo. estos datos seran graficados con el script sorting/scripts
+/plot_generator.py y posteriormente referenciados en el informe.
+
+### Consideraciones:
+- El Algoritmo de QuickSort, debido a las caracteristicas que posee su version estandar, crushea cuando se 
+tiene numeros muy grandes y una suma considerable de valores repetidos, debido a que su metodo de pivote
+genera stack overflow al realizar muchas llamads recursivas por culpa de estos numeros repetidos.
+- Antes de correr el algoritmo se recomienda generar los archivos con el array_generator.py
 -----------------------------------------------------------------------------------------------------------
 
 ## [Scripts]
 
 -----------------------------------------------------------------------------------------------------------
-- **`scripts/array_generator.py`**: Script en Python que genera los casos de prueba (arreglos ascendentes, descendentes y aleatorios) con tamaños de $10^1$ a $10^7$.
-- **`scripts/plot_generator.py`**: Encargado de la visualización de los datos recolectados durante las mediciones de ordenamiento.
+- **`scripts/array_generator.py`**: Genera bancos de pruebas con tamaños de 10^1 a 10^7. Incluye casos 
+ascendentes, descendentes y aleatorios, además de dominios específicos (D1 y D7) para evaluar casos de 
+degradación de rendimiento en algoritmos como QuickSort debido a alta duplicidad de valores.
+- **`scripts/plot_generator.py`**: Genera visualizaciones detalladas de los tiempos de ordenamiento y el 
+consumo de memoria RAM. Capaz de representar escalas logarítmicas para comparar el crecimiento de algoritmos 
+O(n log n) frente a las caídas a O(n^2) observadas en las experimentaciones.
 -----------------------------------------------------------------------------------------------------------
 
 ## [Consideraciones_generales]

@@ -20,6 +20,11 @@ Este repositorio contiene una plantilla en **LaTeX** diseñada específicamente 
 ├── references.bib
 ├── report.pdf
 ├── report.tex
+└── IMG
+    ├── memory_comparasion.png
+    ├──sorting_memory_comparasion.png
+    ├──sorting_time_comparasion.ong
+    └── time_comparasion.png
 └── sections
     ├── conclusions.tex
     ├── experiment_intro.tex
@@ -32,3 +37,6 @@ Este repositorio contiene una plantilla en **LaTeX** diseñada específicamente 
 ### Entrega
 
 La entrega se realiza vía **aula.usm.cl** en formato `.zip`.
+
+### consideraciones:
+- se agrego una carpeta con las imagenes para un mayor orden

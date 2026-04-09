@@ -128,3 +128,19 @@ int main(int argc, char* argv[])
 
     //---------------Guardado de resultados---------------------
     // Guardamos el arreglo ya ordenado en el archivo de salida
+    escribir_salida(archivo_salida, arreglo);
+
+    // Abrimos el archivo de mediciones en modo Append para no sobreescribir datos anteriores
+    ofstream archivo_m(archivo_mediciones, ios::app);
+    
+    // Si el archivo esta vacio (posicion 0), le ponemos los encabezados (headers)
+    if (archivo_m.tellp() == 0) 
+    {
+        archivo_m << "algorithm,n,time_seconds,memory_kb" << endl;
+    }
+    
+    // Registramos la medicion actual
+    archivo_m << algoritmo << "," << n << "," << diferencia.count() << "," << memoria_kb << endl;
+
+    return 0;
+}
