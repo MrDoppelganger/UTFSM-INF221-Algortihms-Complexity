@@ -30,7 +30,7 @@ La entrega se realiza vía **aula.usm.cl** en formato `.zip`.
 
 -----------------------------------------------------------------------------------------------------------
 ### Algoritmos:
-- Naive:
+- **Naive**:
     #### Function:
         void multMat: Realiza multiplicaciones directas, paso por paso y rellena el resultado.
     #### Parameter:
@@ -39,7 +39,7 @@ La entrega se realiza vía **aula.usm.cl** en formato `.zip`.
         vector<vector<int>>& res: Matriz vacia en la que se registrara el resultado.
     #### Return:
         [None]
-- Strassen:
+- **Strassen**:
     #### Function:
         int nextPowerOf2: Calcula la potencia de 2 más cercana (hacia arriba) para un número dado k.
     #### Parameter:
@@ -89,29 +89,43 @@ La entrega se realiza vía **aula.usm.cl** en formato `.zip`.
     #### Return:
         [None]
     ---------
-    # Function:
+    #### Function:
         void ConvertToSquareMat: Actúa como "wrapper" o envoltorio; se encarga de aplicar padding (relleno 
         de ceros) para convertir matrices de cualquier tamaño en cuadradas de potencia 2, llama a Strassen
         y extrae el resultado final.
-    # Parameter:
+    #### Parameter:
         vector<vector<int>> &A: Matriz original A.
         vector<vector<int>> &B: Matriz original B.
         int r1: Cantidad de filas de la matriz A.
         int c1: Cantidad de columnas de la matriz A.
         int r2: Cantidad de filas de la matriz B.
         int c2: Cantidad de columnas de la matriz B.
-    # Return:
+    #### Return:
         [None]
 
 ### Consideraciones:
 - Tanto el algoritmo Naive como Strassen fueron obtenidos de la pagina www.geeksforgeeks.org
 - En el interior de los algoritmo, se puede apreciar la definición de "vii" para señalar vector<vector<int>>
+- El codigo original de Strassen pose unos cuantos "unsigned int" que arrojan warning al crear el make file,
+y como el contexto lo permite, para ahorranos esos warning fueron trasnforamdos en "int".
 -----------------------------------------------------------------------------------------------------------
 
 ## [Programa_principal]
 
 -----------------------------------------------------------------------------------------------------------
-- **`code/matrix_multiplication/matrix_multiplication.cpp`**: Este programa es el encargado de ejecutar los experimentos de multiplicación de matrices. Recibe como argumentos el algoritmo a utilizar (naive o strassen), las rutas de las dos matrices de entrada, el archivo de salida para el resultado y el archivo CSV para registrar las métricas de tiempo y memoria.
+### Algorimtos:
+- **matrix_multiplication.cpp**: Este programa es el encargado de ejecutar los experimentos de multiplicación
+de matrices. Recibe como argumentos el algoritmo a utilizar (naive o strassen), las rutas de las dos matrices 
+de entrada, el archivo de salida para el resultado y el archivo CSV para registrar las métricas de tiempo y 
+memoria. Esta especificamente diseñado para un trabajo directo con los datos de una sola ejecución.
+-**Makefile**: En esta situación el make file tiene una funcion importante a la hora de aplicar los 
+algoritmos, ya que ademas de conectar con todo los documentos para su correcto funcionamiento, tambien se 
+encarga de realizar la iteracion de llamados al codigo 'matrix_multiplication.cpp' para mejorar en eficiencia
+todo el sistema y permitir que este ultimo se centre a trabajos puntuales. 
+
+### Consideraciones:
+- Antes de correr los algoritmos se recomienda generar los archivos con el codigo /scripts/matriz_generator.py
+- En el interior del algoritmo, se puede apreciar la definición de "vii" para señalar vector<vector<int>>
 -----------------------------------------------------------------------------------------------------------
 
 ## [Scripts]
@@ -125,7 +139,7 @@ La entrega se realiza vía **aula.usm.cl** en formato `.zip`.
 
 -----------------------------------------------------------------------------------------------------------
 ### Algoritmos: 
-- MergeSort:
+- **MergeSort**:
     #### Function:
         void merge: Es la función encargada de la "conquista". Toma dos subarreglos adyacentes que ya están
         ordenados internamente y los combina en un único segmento ordenado dentro del arreglo original, 
@@ -149,7 +163,7 @@ La entrega se realiza vía **aula.usm.cl** en formato `.zip`.
         int right: El índice del extremo derecho del segmento actual a procesar.
     ##### Return:
         [None]
-- QuickSort:
+- **QuickSort**:
     ##### Function:
         int partition: Es el motor del algoritmo. Selecciona el último elemento como "pivote" y reorganiza
         el vector de modo que todos los elementos menores o iguales al pivote queden a su izquierda, y los 
@@ -173,7 +187,7 @@ La entrega se realiza vía **aula.usm.cl** en formato `.zip`.
         int high: El límite superior del rango actual de ordenamiento.
     #### Return:
         [None]
-- std::sort:
+- **std::sort**:
     #### Function:
         vector<int> sortArray: este llama al sort base de stl "Introsort" y este se encarga basicamente de 
         evitar el peor caso de O(n²) al cambiar de algoritmo segun como va llendo la situacion, empezando
