@@ -26,7 +26,7 @@ La entrega se realiza vía **aula.usm.cl** en formato `.zip`.
 
 -----------------------------------------------------------------------------------------------------------
 
-## [Multiplicacion_de_Matrices]
+# [Multiplicacion_de_Matrices]
 
 -----------------------------------------------------------------------------------------------------------
 ### Algoritmos:
@@ -122,9 +122,14 @@ memoria. Esta especificamente diseñado para un trabajo directo con los datos de
 algoritmos, ya que ademas de conectar con todo los documentos para su correcto funcionamiento, tambien se 
 encarga de realizar la iteracion de llamados al codigo 'matrix_multiplication.cpp' para mejorar en eficiencia
 todo el sistema y permitir que este ultimo se centre a trabajos puntuales. 
+### Resultados:
+- Los resultados del algoritmo son guardados en un "results.csv" en donde se almacena tanto la velocidad del
+algoritmo, como el tamaño en memoria que utilizo. estos datos seran graficados con el script 
+matrix_multiplication/scripts/plot_generator.py y posteriormente referenciados en el informe
 
 ### Consideraciones:
-- Antes de correr los algoritmos se recomienda generar los archivos con el codigo /scripts/matriz_generator.py
+- Antes de correr los algoritmos se recomienda generar los archivos con el codigo matrix_multiplication/
+scripts/matriz_generator.py
 - En el interior del algoritmo, se puede apreciar la definición de "vii" para señalar vector<vector<int>>
 -----------------------------------------------------------------------------------------------------------
 
@@ -135,7 +140,7 @@ todo el sistema y permitir que este ultimo se centre a trabajos puntuales.
 - **`scripts/plot_generator.py`**: Procesa los resultados de las mediciones y genera gráficos comparativos para el análisis de complejidad experimental.
 -----------------------------------------------------------------------------------------------------------
 
-## [Ordenamiento_de_arreglo_unidimensional]
+# [Ordenamiento_de_arreglo_unidimensional]
 
 -----------------------------------------------------------------------------------------------------------
 ### Algoritmos: 
