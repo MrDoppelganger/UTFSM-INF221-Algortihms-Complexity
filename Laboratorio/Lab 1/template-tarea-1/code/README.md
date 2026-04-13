@@ -264,6 +264,12 @@ O(n log n) frente a las caídas a O(n^2) observadas en las experimentaciones.
 ## [Consideraciones_generales]
 
 -----------------------------------------------------------------------------------------------------------
-- Se ha utilizado la función `getrusage` de la cabecera `<sys/resource.h>` para obtener el uso máximo de memoria residente (Resident Set Size), lo cual proporciona una medida precisa del impacto de cada algoritmo en el sistema.
-- Los archivos de salida (*_out.txt) contienen los resultados finales para validar la corrección de las implementaciones.
-- Los tiempos se miden utilizando `std::chrono::high_resolution_clock` para garantizar precisión de microsegundos.
+- Se ha utilizado la función `getrusage` de la cabecera `<sys/resource.h>` para obtener el uso máximo de 
+memoria residente (Resident Set Size), lo cual proporciona una medida precisa del impacto de cada algoritmo
+en el sistema.
+- Los archivos de salida (*_out.txt) contienen los resultados finales para validar la corrección de las 
+implementaciones.
+- Los tiempos se miden utilizando `std::chrono::high_resolution_clock` para garantizar precisión de 
+microsegundos.
+- Se añadio las salidas de las consola al ejecutar los algoritmos generales, para guardar un historial de 
+los fallos o no fallos que hubieron en la compilacion.
