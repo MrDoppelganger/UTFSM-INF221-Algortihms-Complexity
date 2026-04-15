@@ -16,7 +16,7 @@ using namespace std;
     const vector<int>& arr: Vector con las alturas de los niños
     --------------Return------------------
     int: Devuelve el numero de pasos que se dieron 
-    para ordenar el a los niños.
+    para ordenar a los niños.
     ----------------------------------
 */
 int pasosSorting(const vector<int>& arr)
@@ -34,7 +34,7 @@ int pasosSorting(const vector<int>& arr)
         //Buscamos la posicion del primer niño que mida mas.
         auto pos = upper_bound(fila_ordenada.begin(), fila_ordenada.end(), arr[i]);
         
-        //obtenemos la cantidad de pasos hacia atras que se deben dar.
+        //Obtenemos la cantidad de pasos hacia atras que se deben dar.
         cantidad_pasos += distance(pos, fila_ordenada.end());
 
         //Insertamos al niño en la posición deseada.
@@ -55,5 +55,32 @@ int main()
     //Creacion de variables iniciales
     int p;
 
-    //-----------------
+    //------------------Lectura de Datos-------------------------
+    //Leemos la cantidad de conjuntos de datos (P).
+    if (!(cin >> p)) return 0;
+
+    //Iteramos P veces para procesar cada conjunto de datos de forma independiente.
+    for (int i = 0; i < p; i++)
+    {
+        int k;
+        vector<int> alturas(20);
+
+        //Leemos el numero del conjunto de datos (K).
+        cin >> k;
+
+        //Leemos las 20 estaturas de los niños.
+        for (int j = 0; j < 20; j++)
+        {
+            cin >> alturas[j];
+        }
+
+        //------------------Procesamiento y Salida-------------------
+        //Calculamos los pasos usando nuestra funcion.
+        int total_pasos = pasosSorting(alturas);
+
+        //Imprimimos el resultado siguiendo el formato: K [espacio] total_pasos.
+        cout << k << " " << total_pasos << "\n";
+    }
+
+    return 0;
 }
