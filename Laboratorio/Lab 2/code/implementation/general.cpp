@@ -13,7 +13,8 @@ namespace fs = std::filesystem;
 //------------------Funciones Auxiliares------------------
 /*
     ------------Funcion-----------------
-    parseTestcase: Lee el archivo de prueba y carga los datos 
+    parseTestcase: 
+        Lee el archivo de prueba y carga los datos 
         en las estructuras.
     ------------Parametros----------------
     const string& filename: Ruta del archivo.
@@ -25,20 +26,25 @@ namespace fs = std::filesystem;
     bool: True si la lectura fue exitosa, false en caso contrario.
     ----------------------------------
 */
-bool parseTestcase(const string& filename, int& n, long long& M, long long& E, vector<Anime>& animes) {
+bool parseTestcase(const string& filename, int& n, long long& M, long long& E, vector<Anime>& animes) 
+{
     ifstream infile(filename);
-    if (!infile.is_open()) {
+    if (!infile.is_open()) 
+    {
         cerr << "Error: No se pudo abrir el archivo " << filename << "\n";
         return false;
     }
+    infile >> n >> M >> E;
 
-    if (!(infile >> n >> M >> E)) return false;
-
+    // establecemos el tamaño de nuestro vector
     animes.resize(n);
-    for (int i = 0; i < n; ++i) {
+    //iteramos para cargar cada anime
+    for (int i = 0; i < n; ++i) 
+    {
         infile >> animes[i].nombre >> animes[i].q >> animes[i].b;
         animes[i].capitulos.resize(animes[i].q);
-        
+
+        //Iteramos para cargar los capitulos de cada anime.
         for (int j = 0; j < animes[i].q; ++j) {
             infile >> animes[i].capitulos[j].t >> animes[i].capitulos[j].c >> animes[i].capitulos[j].v;
         }

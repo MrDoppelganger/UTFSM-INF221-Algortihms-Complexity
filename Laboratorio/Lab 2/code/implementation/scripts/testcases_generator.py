@@ -31,12 +31,12 @@ def escribirCasoPrueba(ruta_archivo, n, M, E, animes):
 
 '''
     ------------Funcion-----------------
-    generarInstancia: Funcion encargada de crear aleatoriamente los datos 
-    de una sola instancia del problema AniMarathon y luego escribirla
-    en el documento instanciado usando "escribirCasoPrueba".
+    generarInstancia: 
+        Funcion encargada de crear aleatoriamente los datos 
+        de una sola instancia del problema y luego escribirla
+        en el documento llamando a "escribirCasoPrueba".
     ------------Parametros----------------
-    str tipo: tipo de rango de generacion de instancias 'Chica', 'Mediana' 
-        o 'Grande'.
+    str tipo: tipo de rango de generacion de instancias "Chica", "Mediana" o "Grande".
     int num: Identificador de la instancia.
     str carpeta_objetivo: Carpeta donde se guardara.
     --------------Return------------------
@@ -44,14 +44,14 @@ def escribirCasoPrueba(ruta_archivo, n, M, E, animes):
     ----------------------------------
 '''
 def generarInstancia(tipo, num, carpeta_objetivo):
-    #--------------------------Generacion de parametros base---------------------------
+    # Generacion de parametros base
     if tipo == 'Chica':     
         n = random.randint(3, 8)
         max_capitulos = 5
     elif tipo == 'Mediana':
         n = random.randint(20, 80)
         max_capitulos = 8
-    else: # Grande
+    else:
         n = random.randint(100, 200)
         max_capitulos = 12
 
@@ -59,50 +59,63 @@ def generarInstancia(tipo, num, carpeta_objetivo):
     animes = []
     tiempo_total_estimado = 0
     energia_total_estimada = 0
+    capitulos_totales = 0 # Agregamos un contador para Q
 
     for i in range(1, n + 1):
         anime_data = {}
         anime_data['nombre'] = f"anime_{tipo.lower()}_{i}"
         
         q = random.randint(1, max_capitulos)
+        
+        # Evitamos pasarnos del limite Q = 700
+        if capitulos_totales + q > 700:
+            q = max(0, 700 - capitulos_totales)
+            if q == 0:
+                continue # Ya no agregamos mas animes si llegamos a 700
+        
+        capitulos_totales += q
+        
         anime_data['q'] = q
-        anime_data['b'] = random.randint(10, 200) # Bono por completar
+        # Aumentamos el rango de los bonos
+        anime_data['b'] = random.randint(0, 100000000) 
         
         capitulos = []
         for j in range(1, q + 1):
-            t = random.randint(1, 10) # Duracion del capitulo
-            c = random.randint(1, 10)  # Costo de energia
-            v = random.randint(10, 100) # Satisfaccion
+            # Aprovechamos mejor los limites del enunciado
+            tiempo = random.randint(1, 300)              
+            costo = random.randint(1, 100)               
+            satisfaccion = random.randint(1, 100000000)      
             
-            capitulos.append({'t': t, 'c': c, 'v': v})
+            capitulos.append({'t': tiempo, 'c': costo, 'v': satisfaccion})
             
-            tiempo_total_estimado += t
-            energia_total_estimada += c
+            tiempo_total_estimado += tiempo
+            energia_total_estimada += costo
             
         anime_data['capitulos'] = capitulos
         animes.append(anime_data)
 
-    # Restringimos M y E para que no sea trivial (el usuario no puede ver todo)
-    # y para que los algoritmos tengan que elegir
+    # Restringimos M y E con el calculo original, pero lo "capeamos" al limite maximo exigido
     M = int(tiempo_total_estimado * random.uniform(0.4, 0.6))
     E = int(energia_total_estimada * random.uniform(0.4, 0.6))
 
-    # Asegurar que al menos M y E sean minimos para ver algo
-    M = max(M, 10)
-    E = max(E, 10)
+    #establecemos los rangos de cada uno
+    M = min(max(M, 10), 3000) 
+    E = min(max(E, 10), 500) 
 
-    # ----------------------------------Guardado---------------------------------------
+    # Arreglamos el formato del nombre del archivo testcases_{n}_{i}.txt
     nombre_archivo = f"testcases_{n}_{num}.txt"
     ruta_completa = os.path.join(carpeta_objetivo, nombre_archivo)
     
+    # Actualizamos el 'n' por si se descartaron animes al superar los 700 caps
+    n_real = len(animes)
+    escribirCasoPrueba(ruta_completa, n_real, M, E, animes)
     escribirCasoPrueba(ruta_completa, n, M, E, animes)
 
 def main():
     #------------------Inicializacion---------------------------
-    # Forzamos una nueva semilla aleatoria basándonos en el tiempo exacto de ejecución
+    # Creamos una semilla para esta instancia especifica
     random.seed(time.time()) 
-    
-    # Obtiene la ruta absoluta de la carpeta 'scripts' y luego sube un nivel hacia 'data/inputs'
+    # Establecemos la direccion de los test
     script_dir = os.path.dirname(os.path.abspath(__file__))
     carpeta_objetivo_destino = os.path.join(script_dir, "..", "data", "inputs")
     
@@ -117,8 +130,7 @@ def main():
     
     total_generadas = 0
     for tipo in tipos_instancias:
-        # Se solicitan multiples instancias por cada dimensionalidad
-        # Por ejemplo, 5 de cada una
+        # Generamos 5 instancias para tener casos de pruebas.
         for i in range(1, 6):
             generarInstancia(tipo, i, carpeta_objetivo_destino)
             total_generadas += 1
