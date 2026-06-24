@@ -1,154 +1,245 @@
 //------------------Librerias--------------------
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
+#include "algorithms/common.h"
 #include <chrono>
 #include <filesystem>
-#include "algorithms/common.h"
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <string>
+#include <sys/resource.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <vector>
 
 using namespace std;
 namespace fs = std::filesystem;
 
+//------------------Medicion Aislada------------------
+template <typename Func>
+long long medirEjecucion(Func funcionObjetivo, long long &resultado_final, double &tiempo_ms) 
+{
+    // Creamos un conducto (pipe) para comunicar el proceso padre con el hijo
+    int pipe_fd[2];
+    if (pipe(pipe_fd) == -1) 
+    {
+        cerr << "Error al crear pipe para fork()\n";
+        return -1;
+    }
+
+    // Bifurcamos el programa para aislar y medir puramente la memoria del algoritmo
+    pid_t pid = fork();
+    if (pid < 0) 
+    {
+        cerr << "Error al ejecutar fork()\n";
+        return -1;
+    }
+
+    if (pid == 0) 
+    {
+        // Entramos al proceso hijo y bloqueamos el acceso de lectura
+        close(pipe_fd[0]);
+        
+        // Cronometramos la ejecucion exacta de la funcion enviada
+        auto inicio = chrono::high_resolution_clock::now();
+        long long resultado_local = funcionObjetivo();
+        auto fin = chrono::high_resolution_clock::now();
+        double duracion_ms = chrono::duration<double, milli>(fin - inicio).count();
+
+        // Transferimos los calculos obtenidos al proceso padre
+        if (write(pipe_fd[1], &resultado_local, sizeof(resultado_local)) == -1) 
+        {
+            cerr << "Error al escribir el resultado en el pipe\n";
+        }
+        if (write(pipe_fd[1], &duracion_ms, sizeof(duracion_ms)) == -1) 
+        {
+            cerr << "Error al escribir el tiempo en el pipe\n";
+        }
+        
+        close(pipe_fd[1]);
+        exit(0);
+    } 
+    else 
+    {
+        // Entramos al proceso padre y bloqueamos el acceso de escritura
+        close(pipe_fd[1]);
+        long long resultado_local = -1;
+        double duracion_ms = -1;
+
+        // Extraemos los calculos transferidos por el proceso hijo
+        if (read(pipe_fd[0], &resultado_local, sizeof(resultado_local)) == -1) 
+        {
+            cerr << "Error al leer el resultado del pipe\n";
+        }
+        if (read(pipe_fd[0], &duracion_ms, sizeof(duracion_ms)) == -1) 
+        {
+            cerr << "Error al leer el tiempo del pipe\n";
+        }
+        close(pipe_fd[0]);
+
+        // Sincronizamos la finalizacion del hijo para capturar su impacto en RAM
+        int estado;
+        struct rusage uso_recursos;
+        wait4(pid, &estado, 0, &uso_recursos);
+
+        resultado_final = resultado_local;
+        tiempo_ms = duracion_ms;
+
+        // Retornamos el consumo de memoria residente (Peak RAM) en KB
+        return uso_recursos.ru_maxrss;
+    }
+}
+
 //------------------Funciones Auxiliares------------------
 /*
     ------------Funcion-----------------
-    parseTestcase: 
-        Lee el archivo de prueba y carga los datos 
-        en las estructuras.
+    leerCasoPrueba:
+        Lee el archivo de texto entrante y mapea los datos
+        hacia las estructuras de memoria del programa.
     ------------Parametros----------------
-    const string& filename: Ruta del archivo.
+    const string& nombre_archivo: Ruta del archivo.
     int& n: Referencia para el numero de animes.
-    long long& M: Referencia para el tiempo maximo.
-    long long& E: Referencia para la energia maxima.
-    vector<Anime>& animes: Referencia al vector donde se guardaran los animes.
+    long long& minutos_maximos: Referencia para el limite de tiempo (M).
+    long long& energia_maxima: Referencia para el limite de energia (E).
+    vector<Anime>& animes: Referencia al vector donde se alojaran los animes.
     --------------Return------------------
-    bool: True si la lectura fue exitosa, false en caso contrario.
+    bool: True si la carga de datos fue exitosa, false en caso de error.
     ----------------------------------
 */
-bool parseTestcase(const string& filename, int& n, long long& M, long long& E, vector<Anime>& animes) 
+bool leerCasoPrueba(const string &nombre_archivo, int &n, long long &minutos_maximos, long long &energia_maxima, vector<Anime> &animes) 
 {
-    ifstream infile(filename);
-    if (!infile.is_open()) 
+    // Intentamos cargar el archivo indicado por consola
+    ifstream archivo_entrada(nombre_archivo);
+    if (!archivo_entrada.is_open()) 
     {
-        cerr << "Error: No se pudo abrir el archivo " << filename << "\n";
+        cerr << "Error: No se pudo abrir el archivo " << nombre_archivo << "\n";
         return false;
     }
-    infile >> n >> M >> E;
+    
+    // Extraemos las limitantes globales de la mochila
+    archivo_entrada >> n >> minutos_maximos >> energia_maxima;
 
-    // establecemos el tamaño de nuestro vector
+    // Dimensionamos la estructura principal para evitar realojamientos de memoria
     animes.resize(n);
-    //iteramos para cargar cada anime
+    
+    // Recolectamos la metadata de cada anime y de sus capitulos
     for (int i = 0; i < n; ++i) 
     {
-        infile >> animes[i].nombre >> animes[i].q >> animes[i].b;
+        archivo_entrada >> animes[i].nombre >> animes[i].q >> animes[i].b;
         animes[i].capitulos.resize(animes[i].q);
 
-        //Iteramos para cargar los capitulos de cada anime.
-        for (int j = 0; j < animes[i].q; ++j) {
-            infile >> animes[i].capitulos[j].t >> animes[i].capitulos[j].c >> animes[i].capitulos[j].v;
+        for (int j = 0; j < animes[i].q; ++j) 
+        {
+            archivo_entrada >> animes[i].capitulos[j].t >> animes[i].capitulos[j].c >> animes[i].capitulos[j].v;
         }
     }
 
-    infile.close();
+    archivo_entrada.close();
     return true;
 }
 
 //------------------Main------------------
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) 
+{
     //------------------Inicializacion------------------
+    // Optimizamos los flujos estandar para acelerar la lectura de datos
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    if (argc < 2) {
+    // Comprobamos la inyeccion correcta de argumentos por consola
+    if (argc < 2) 
+    {
         cerr << "Uso: " << argv[0] << " <ruta_al_testcase>\n";
         return 1;
     }
 
-    string filename = argv[1];
-    
+    string nombre_archivo = argv[1];
+
     int n;
-    long long M, E;
+    long long minutos_maximos, energia_maxima;
     vector<Anime> animes;
 
-    // Parseo de los datos
-    if (!parseTestcase(filename, n, M, E, animes)) {
+    // Delegamos la interpretacion del archivo y verificamos errores
+    if (!leerCasoPrueba(nombre_archivo, n, minutos_maximos, energia_maxima, animes)) 
+    {
         return 1;
     }
 
+    // Calculamos el universo total de capitulos para nuestras estadisticas
+    int total_capitulos = 0;
+    for (int i = 0; i < n; i++) 
+    {
+        total_capitulos += animes[i].q;
+    }
+
     //------------------Procesamiento y Medicion------------------
-    long long res_bf = -1, res_dp = -1, res_g1 = -1, res_g2 = -1;
-    double time_bf = -1, time_dp = -1, time_g1 = -1, time_g2 = -1;
+    long long resultado_fuerza_bruta = -1, resultado_dp = -1, resultado_greedy_1 = -1, resultado_greedy_2 = -1;
+    double tiempo_fuerza_bruta = -1, tiempo_dp = -1, tiempo_greedy_1 = -1, tiempo_greedy_2 = -1;
+    long long memoria_fuerza_bruta = -1, memoria_dp = -1, memoria_greedy_1 = -1, memoria_greedy_2 = -1;
 
-    // Ejecucion Greedy 1
-    auto start_g1 = chrono::high_resolution_clock::now();
-    res_g1 = solve_greedy1(n, M, E, animes);
-    auto end_g1 = chrono::high_resolution_clock::now();
-    time_g1 = chrono::duration<double, milli>(end_g1 - start_g1).count();
+    // Evaluamos el rendimiento de la heuristica basada en satisfaccion
+    memoria_greedy_1 = medirEjecucion([&]() { return resolverGreedyV(n, minutos_maximos, energia_maxima, animes); }, resultado_greedy_1, tiempo_greedy_1);
 
-    // Ejecucion Greedy 2
-    auto start_g2 = chrono::high_resolution_clock::now();
-    res_g2 = solve_greedy2(n, M, E, animes);
-    auto end_g2 = chrono::high_resolution_clock::now();
-    time_g2 = chrono::duration<double, milli>(end_g2 - start_g2).count();
+    // Evaluamos el rendimiento de la heuristica basada en eficiencia
+    memoria_greedy_2 = medirEjecucion([&]() { return resolverGreedyVdivT(n, minutos_maximos, energia_maxima, animes); }, resultado_greedy_2, tiempo_greedy_2);
 
-    // Ejecucion DP
-    auto start_dp = chrono::high_resolution_clock::now();
-    res_dp = solve_dp(n, M, E, animes);
-    auto end_dp = chrono::high_resolution_clock::now();
-    time_dp = chrono::duration<double, milli>(end_dp - start_dp).count();
+    // Evaluamos el rendimiento de la busqueda del optimo garantizado
+    memoria_dp = medirEjecucion([&]() { return resolverDP(n, minutos_maximos, energia_maxima, animes); }, resultado_dp, tiempo_dp);
 
-    // Ejecucion Fuerza Bruta (Solo para n pequeño, si no se demorará demasiado)
-    if (n <= 10) {
-        auto start_bf = chrono::high_resolution_clock::now();
-        res_bf = solve_brute_force(n, M, E, animes);
-        auto end_bf = chrono::high_resolution_clock::now();
-        time_bf = chrono::duration<double, milli>(end_bf - start_bf).count();
+    // Restringimos Fuerza Bruta a casos de prueba muy reducidos para no colapsar la maquina
+    if (n <= 20) 
+    {
+        memoria_fuerza_bruta = medirEjecucion([&]() { return resolverFuerzaBruta(n, minutos_maximos, energia_maxima, animes); }, resultado_fuerza_bruta, tiempo_fuerza_bruta);
     }
 
     //------------------Salida de Resultados------------------
-    // Extraer el nombre base del archivo para nombrar los outputs
-    fs::path p(filename);
-    string base_filename = p.stem().string(); // Ej: testcases_5_1
+    // Aislamos el identificador del caso de prueba para nombrar ordenadamente los logs
+    fs::path ruta_archivo(nombre_archivo);
+    string nombre_base = ruta_archivo.stem().string(); 
 
-    // Asegurar que las carpetas existan
+    // Garantizamos la existencia de los directorios receptores
     fs::create_directories("data/outputs");
     fs::create_directories("data/measurements");
 
-    // Guardar outputs (Resultados)
-    string output_path = "data/outputs/output_" + base_filename + ".txt";
-    ofstream out_file(output_path);
-    if (out_file.is_open()) {
-        out_file << "Resultados para: " << filename << "\n";
-        out_file << "==============================\n";
-        out_file << "Brute Force: " << (res_bf != -1 ? to_string(res_bf) : "N/A (n muy grande)") << "\n";
-        out_file << "Dynamic Programming: " << res_dp << "\n";
-        out_file << "Greedy 1 (v): " << res_g1 << "\n";
-        out_file << "Greedy 2 (v/t): " << res_g2 << "\n";
-        out_file.close();
+    // Generamos un reporte individual con los resultados obtenidos en este test
+    string ruta_salida = "data/outputs/output_" + nombre_base + ".txt";
+    ofstream archivo_salida(ruta_salida);
+    if (archivo_salida.is_open()) 
+    {
+        archivo_salida << "Resultados para: " << nombre_archivo << "\n";
+        archivo_salida << "==============================\n";
+        archivo_salida << "Brute Force: " << (resultado_fuerza_bruta != -1 ? to_string(resultado_fuerza_bruta) : "N/A (n muy grande)") << "\n";
+        archivo_salida << "Dynamic Programming: " << resultado_dp << "\n";
+        archivo_salida << "Greedy 1 (v): " << resultado_greedy_1 << "\n";
+        archivo_salida << "Greedy 2 (v/t): " << resultado_greedy_2 << "\n";
+        archivo_salida.close();
     }
 
-    // Guardar mediciones en CSV
-    string measure_path = "data/measurements/measurements.csv";
-    bool file_exists = fs::exists(measure_path);
-    
-    ofstream meas_file(measure_path, ios::app);
-    if (meas_file.is_open()) {
-        // Escribir cabecera si el archivo no existia
-        if (!file_exists) {
-            meas_file << "Instancia,N,M,E,Algoritmo,Tiempo_ms,Satisfaccion\n";
+    // Registramos la telemetria en el dataset central para posteriores graficos
+    string ruta_mediciones = "data/measurements/measurements.csv";
+    bool existe_archivo = fs::exists(ruta_mediciones);
+
+    ofstream archivo_mediciones(ruta_mediciones, ios::app);
+    if (archivo_mediciones.is_open()) 
+    {
+        // Si el archivo de registro no existe, inyectamos los encabezados de columna
+        if (!existe_archivo) 
+        {
+            archivo_mediciones << "Instancia,N,Q,M,E,Algoritmo,Tiempo_ms,Satisfaccion,Memoria_KB\n";
+        }
+
+        // Volcamos la metadata de cada enfoque validando si fueron ejecutados
+        if (resultado_fuerza_bruta != -1) 
+        {
+            archivo_mediciones << nombre_base << "," << n << "," << total_capitulos << "," << minutos_maximos << "," << energia_maxima << ",BruteForce," << tiempo_fuerza_bruta << "," << resultado_fuerza_bruta << "," << memoria_fuerza_bruta << "\n";
         }
         
-        if (res_bf != -1) {
-            meas_file << base_filename << "," << n << "," << M << "," << E << ",BruteForce," << time_bf << "," << res_bf << "\n";
-        }
-        meas_file << base_filename << "," << n << "," << M << "," << E << ",DP," << time_dp << "," << res_dp << "\n";
-        meas_file << base_filename << "," << n << "," << M << "," << E << ",Greedy1," << time_g1 << "," << res_g1 << "\n";
-        meas_file << base_filename << "," << n << "," << M << "," << E << ",Greedy2," << time_g2 << "," << res_g2 << "\n";
-        
-        meas_file.close();
+        archivo_mediciones << nombre_base << "," << n << "," << total_capitulos << "," << minutos_maximos << "," << energia_maxima << ",DP," << tiempo_dp << "," << resultado_dp << "," << memoria_dp << "\n";
+        archivo_mediciones << nombre_base << "," << n << "," << total_capitulos << "," << minutos_maximos << "," << energia_maxima << ",Greedy(v)," << tiempo_greedy_1 << "," << resultado_greedy_1 << "," << memoria_greedy_1 << "\n";
+        archivo_mediciones << nombre_base << "," << n << "," << total_capitulos << "," << minutos_maximos << "," << energia_maxima << ",Greedy(v/t)," << tiempo_greedy_2 << "," << resultado_greedy_2 << "," << memoria_greedy_2 << "\n";
+
+        archivo_mediciones.close();
     }
 
-    cout << "Ejecucion completada para: " << base_filename << "\n";
+    cout << "Ejecucion completada para: " << nombre_base << "\n";
     return 0;
 }

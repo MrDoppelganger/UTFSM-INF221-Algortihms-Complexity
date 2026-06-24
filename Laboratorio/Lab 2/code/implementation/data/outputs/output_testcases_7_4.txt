@@ -1,0 +1,6 @@
+Resultados para: data/inputs/testcases_7_4.txt
+==============================
+Brute Force: 272715688
+Dynamic Programming: 272715688
+Greedy 1 (v): 218990321
+Greedy 2 (v/t): 217313568

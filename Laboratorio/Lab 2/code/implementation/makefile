@@ -43,10 +43,21 @@ run_tests: $(TARGET)
 	done
 	@echo "Pruebas finalizadas."
 
+generate_data: directories
+	python3 scripts/testcases_generator.py
+
+generate_plots: directories
+	python3 scripts/plot_generator.py
+
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
 
 clean_data:
 	rm -rf $(OUT_DIR)/* $(MEAS_DIR)/* $(TC_DIR)/*
 
-.PHONY: all directories run_tests clean clean_data
+clean_graficos:
+	rm -rf $(DATA_DIR)/plots/*
+
+clean_all: clean clean_data clean_graficos
+
+.PHONY: all directories run_tests clean clean_data clean_graficos clean_all generate_data generate_plots

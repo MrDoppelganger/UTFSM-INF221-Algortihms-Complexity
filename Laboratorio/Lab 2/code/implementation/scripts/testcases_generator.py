@@ -46,20 +46,19 @@ def escribirCasoPrueba(ruta_archivo, n, M, E, animes):
 def generarInstancia(tipo, num, carpeta_objetivo):
     # Generacion de parametros base
     if tipo == 'Chica':     
-        n = random.randint(3, 8)
-        max_capitulos = 5
+        n = random.randint(3, 15)
+        max_capitulos = 4
     elif tipo == 'Mediana':
-        n = random.randint(20, 80)
-        max_capitulos = 8
+        n = random.randint(15, 50)
+        max_capitulos = 6
     else:
-        n = random.randint(100, 200)
+        n = random.randint(60, 200)
         max_capitulos = 12
 
-    #---------------------------Generacion de animes----------------------------
     animes = []
     tiempo_total_estimado = 0
     energia_total_estimada = 0
-    capitulos_totales = 0 # Agregamos un contador para Q
+    capitulos_totales = 0 
 
     for i in range(1, n + 1):
         anime_data = {}
@@ -71,20 +70,19 @@ def generarInstancia(tipo, num, carpeta_objetivo):
         if capitulos_totales + q > 700:
             q = max(0, 700 - capitulos_totales)
             if q == 0:
-                continue # Ya no agregamos mas animes si llegamos a 700
+                break # Usamos break en lugar de continue para detener la creación por completo
         
         capitulos_totales += q
         
         anime_data['q'] = q
-        # Aumentamos el rango de los bonos
         anime_data['b'] = random.randint(0, 100000000) 
         
         capitulos = []
         for j in range(1, q + 1):
-            # Aprovechamos mejor los limites del enunciado
-            tiempo = random.randint(1, 300)              
-            costo = random.randint(1, 100)               
-            satisfaccion = random.randint(1, 100000000)      
+            # Reducimos los limites para que las sumas no exploten tan rapido
+            tiempo = random.randint(5, 40)              
+            costo = random.randint(1, 10)               
+            satisfaccion = random.randint(100, 10000000)      
             
             capitulos.append({'t': tiempo, 'c': costo, 'v': satisfaccion})
             
@@ -94,22 +92,19 @@ def generarInstancia(tipo, num, carpeta_objetivo):
         anime_data['capitulos'] = capitulos
         animes.append(anime_data)
 
-    # Restringimos M y E con el calculo original, pero lo "capeamos" al limite maximo exigido
-    M = int(tiempo_total_estimado * random.uniform(0.4, 0.6))
-    E = int(energia_total_estimada * random.uniform(0.4, 0.6))
+    # El multiplicador ahora nos dará valores mucho más variados debajo del límite
+    M = int(tiempo_total_estimado * random.uniform(0.4, 0.7))
+    E = int(energia_total_estimada * random.uniform(0.4, 0.7))
 
-    #establecemos los rangos de cada uno
+    # Protecciones minimas y maximas
     M = min(max(M, 10), 3000) 
     E = min(max(E, 10), 500) 
 
-    # Arreglamos el formato del nombre del archivo testcases_{n}_{i}.txt
-    nombre_archivo = f"testcases_{n}_{num}.txt"
+    nombre_archivo = f"testcases_{len(animes)}_{num}.txt"
     ruta_completa = os.path.join(carpeta_objetivo, nombre_archivo)
     
-    # Actualizamos el 'n' por si se descartaron animes al superar los 700 caps
-    n_real = len(animes)
-    escribirCasoPrueba(ruta_completa, n_real, M, E, animes)
-    escribirCasoPrueba(ruta_completa, n, M, E, animes)
+    # Escribimos SOLO UNA VEZ con la cantidad real
+    escribirCasoPrueba(ruta_completa, len(animes), M, E, animes)
 
 def main():
     #------------------Inicializacion---------------------------

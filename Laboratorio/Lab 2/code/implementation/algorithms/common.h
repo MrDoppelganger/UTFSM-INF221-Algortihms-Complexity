@@ -42,7 +42,7 @@ struct Anime {
 };
 
 //------------------Declaracion de Algoritmos------------------
-long long solve_brute_force(int n, long long M, long long E, const vector<Anime>& animes);
-long long solve_dp(int n, long long M, long long E, const vector<Anime>& animes);
-long long solve_greedy1(int n, long long M, long long E, const vector<Anime>& animes);
-long long solve_greedy2(int n, long long M, long long E, const vector<Anime>& animes);
+long long resolverFuerzaBruta(int n, long long M, long long E, const vector<Anime>& animes);
+long long resolverDP(int n, long long M, long long E, const vector<Anime>& animes);
+long long resolverGreedyV(int n, long long M, long long E, const vector<Anime>& animes);
+long long resolverGreedyVdivT(int n, long long M, long long E, const vector<Anime>& animes);

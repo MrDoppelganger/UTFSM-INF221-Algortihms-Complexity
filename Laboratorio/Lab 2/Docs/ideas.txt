@@ -480,3 +480,189 @@ int main()
 
     return 0;
 }
+
+==================READMES ANIDADOS=============
+README principal:
+# Proyecto PAU: Experiencia de postulación
+
+> **Universidad:** Universidad Técnica Federico Santa María (UTFSM)  
+> **Curso:** Análisis y diseño de Software(INF236) — 1° Semestre/2026  
+> **Grupo:** 9
+>
+> **Integrantes:**
+> * Vicente Rodríguez Rogers        | 202273503-1 
+> * Victoria Andrea Medina Castro   | 202373586-8 
+> * Gabriel Alejandro Toro Varela   | 202204557-4
+> * Javier Alonso Gana Muñoz        | 202373540-k       
+>
+> **Tutor:** Matias Barrera
+
+---
+
+Este es el README principal. Aquí se encuentra toda la documentación general, el código fuente 
+y las instrucciones necesarias para levantar el entorno completo de la aplicación. La aplicación 
+está completamente dockerizada para garantizar su portabilidad.
+
+## Wiki
+
+### <u> **Acceso a la pagina:** </u> [HOME](https://gitlab.inf.utfsm.cl/inf236-2026-1/inf236-sj-09/-/wikis/home)
+
+## Servicios de la Aplicación
+
+Nuestra aplicación está construida sobre una arquitectura moderna basada en microservicios, compuesta por las 
+siguientes tecnologías principales:
+
+*   **Frontend (Cliente):** Desarrollado con **React** y empaquetado con **Vite**. Utiliza **Tailwind CSS** 
+para un diseño moderno, estético y responsivo. Se encarga de la interfaz gráfica y la interacción con el 
+usuario final.
+*   **Backend (Servidor):** Construido con **Node.js** y **Express**. Se encarga de la lógica de negocio, 
+manejo de peticiones de la API REST y conexión con la base de datos. Está estructurado bajo el patrón de 
+diseño MVC (Modelo-Vista-Controlador).
+*   **Base de Datos:** Se utiliza **PostgreSQL** como base de datos relacional para el almacenamiento seguro y
+ estructurado de la información del sistema.
+
+Todos estos servicios están orquestados de manera conjunta mediante **Docker Compose**, lo que permite levantar
+ el proyecto completo de manera rápida y sin problemas de compatibilidad en diferentes sistemas operativos.
+
+## Aspectos Tecnicos
+
+### <u>**Estructura del repositorio** </u>
+
+```bash
+├── Docs/                                   # Documentos e ideas del proyecto.
+│   └── Evidencia.ipynb                     # Evidencia del levantamiento del proyecto.
+├── Proyecto-PAU-Node-Docker/               # Proyecto Dockerizado.
+│   ├── client/                             # Front-end (React, Vite, Tailwind CSS).
+│   ├── server/                             # Back-end (Node.js, Express, PostgreSQL).
+│   └── docker-compose.yml                  # Docker Compose que conecta ambas partes y la BD.
+├── .gitignore
+└── README.md                               
+```
+
+### <u> **Levantamiento**: </u>
+*   Se recomienda asegurar que no se posee nada en los puertos ***3000*** y ***5000*** de localhost.
+*   Se debe ingresar a la carpeta ***/Proyecto-PAU-Node-Docker***.
+*   Al abrir una terminal dentro de este entorno se ejecuta el comando: ***docker compose up --build***.
+*   Para visualizar la pagina como se desea, se deben crear las tablas de la base de datos e instalar su 
+mock data tal cual se muestra en el README ubicado en la carpeta ***server/***
+*   Se accede a la aplicación desde ***http://localhost:3000/***
+
+## 📷 Video de prototipo
+
+* Enlace al video demostrativo del prototipo: [video](https://youtu.be/CzRukkanIzE)
+
+### <u> **Consideraciones**: </u>
+*   Se reorganizó el repositorio con el formato client-server, separando la sección del front-end con la 
+del back-end para tener un proyecto más profesional y ordenado. Por esta misma razón se realizaron las 
+modificaciones pertinentes para que el levantamiento del docker considere estos cambios.
+*   El front-end (client/React) fue creado a partir de **Vite**.
+*   Se actualizó el node a una versión más actual, pasando de la 18 a la 22.
+*   Se eligió no sobrecargar el repositorio subiendo los node_modules, los cuales se descargaran 
+automáticamente al levantar el contenedor de Docker.
+*   Se utilizó el framework **Tailwind CSS** para react, para así tener un front-end más pulido y moderno.
+*   En caso de que existan problemas al levantar el docker por corrupción de archivos (debido a usar el 
+node_modules local o interrupciones previas), se recomienda detenerlo con ***docker compose down -v***, ejecutar
+ ***docker compose build --no-cache***, y finalmente ejecutar ***docker compose up -d***.
+
+README(Server):
+# Server
+Este directorio contiene el código fuente y las dependencias del backend de la aplicación. 
+Está construido con Node.js y Express, siguiendo un patrón MVC (Modelo-Vista-Controlador), y se encarga 
+de manejar la API REST y la conexión a la base de datos PostgreSQL.
+
+---
+
+### <u>Estructura</u>:
+
+```bash
+├── server/
+│   ├── node_modules/                       # Dependencias instaladas (ignoradas en Git).
+│   ├── src/                                # Código principal del backend.
+│   │   ├── config/                         # Configuración de servicios externos.
+│   │   │   └── db.js                       # Conexión con PostgreSQL.
+│   │   ├── controllers/                    # Controladores (Lógica de los endpoints).
+│   │   │   ├── ayudantiasController.js     # Lógica de ayudantías.
+│   │   │   ├── estudiantesController.js    # Lógica de estudiantes.
+│   │   │   └── testController.js           # Lógica para rutas de prueba.
+│   │   ├── routes/                         # Definición de rutas (Endpoints).
+│   │   │   ├── ayudantiasRoutes.js         # Endpoints de ayudantías.
+│   │   │   ├── estudiantesRoutes.js        # Endpoints de estudiantes.
+│   │   │   └── testRoutes.js               # Endpoints de prueba.
+│   │   ├── scripts/                        # Scripts utilitarios de la base de datos.
+│   │   │   ├── initDB.js                   # Creación inicial de las tablas.
+│   │   │   └── mockData.js                 # Inserción de datos de ejemplo (Mock Data).
+│   │   └── index.js                        # Punto de entrada de la aplicación Express.
+│   ├── Dockerfile                          # Configuración de la imagen Docker del backend.
+│   ├── package-lock.json                   # Árbol de dependencias bloqueadas.
+│   ├── package.json                        # Definición de paquetes npm y dependencias.
+│   └── README.md                           # Este documento.
+```
+
+---
+
+### <u>Config inicial</u>
+*   Para subir las tablas a la base de datos se necesita ejecutar el script ***src/scripts/initDB.js*** utilizando el siguiente comando dentro de la terminal, ubicados en la carpeta ***Proyecto-PAU-Node-Docker/***:    
+```bash
+docker exec -it proyecto-pau-node-docker-server-1 node src/scripts/initDB.js
+```
+
+*   Con las tablas creadas, podemos insertar Mock Data para visualizar ciertos datos de ejemplo en la página. Para ello aplicamos los mismos pasos pero ejecutando el script ***src/scripts/mockData.js***:    
+```bash
+docker exec -it proyecto-pau-node-docker-server-1 node src/scripts/mockData.js
+```
+
+---
+
+### <u>Consideraciones</u>:
+*   Es importante cargar las tablas y la mock data al levantar el entorno por primera vez para asegurar el correcto funcionamiento de los endpoints y tener la experiencia visual deseada en el front-end.
+*   El servidor se expone en el puerto local 5000 y se comunica con el contenedor de la base de datos a través de la red interna de Docker Compose.
+
+README(client):
+# Cliente
+
+Este directorio contiene el código fuente del frontend de la aplicación. aqui se hubica 
+todo el contenido del REACT y sus herramientas que nos permiten este frontend mas pulido.
+
+---
+
+### <u>Estructura</u>:
+
+```bash
+├── client/
+│   ├── node_modules/                   # Dependencias instaladas (ignoradas en el git, se instalan sola).
+│   ├── public/                         # Archivos estáticos accesibles públicamente.
+│   ├── src/                            # Código principal del frontend.
+│   │   ├── assets/                     # Imágenes, íconos y otros recursos (hero.png, vite.svg).
+│   │   ├── components/                 # Componentes reutilizables de React (AyudantiaCard, Modal, Sidebar, etc).
+│   │   ├── context/                    # Contextos globales de React (ThemeContext para el modo oscuro).
+│   │   ├── pages/                      # Vistas principales de la aplicación.
+│   │   │   └── Dashboard.jsx           # Vista principal de la pagina
+│   │   ├── App.jsx                     # Componente raíz que define la estructura principal.
+│   │   ├── App.css                     # Carga los estilos de la pagina
+│   │   ├── main.jsx                    # Punto de entrada y montaje de React.
+│   │   └── index.css                   # Archivo principal de Tailwind y estilos base globales.
+│   ├── Dockerfile                      # Configuración de la imagen Docker para el frontend.
+│   ├── index.html                      # Plantilla HTML inicial donde se inyecta Vite y React.
+│   ├── eslint.config.js                # Configuración del linter (ESLint).
+│   ├── package-lock.json               # Árbol de versiones de dependencias bloqueadas.
+│   ├── package.json                    # Dependencias del frontend y scripts npm.
+│   ├── vite.config.js                  # Configuración del servidor de desarrollo y bundler de Vite.                       
+│   └── README.md
+```
+
+---
+
+### <u>Herramientas Instaladas e Infraestructura</u>:
+
+Para garantizar una experiencia de desarrollo moderna y ágil, utilizamos las siguientes herramientas a partir
+de la libreria principal de REACT:
+
+*   **Vite:** Se utiliza como empaquetador principal (bundler) y servidor de desarrollo. Fue elegido por encima 
+de "Create React App" debido a su extrema velocidad de construcción y a su servidor de desarrollo instantáneo 
+utilizando *Hot Module Replacement (HMR)*.
+*   **Tailwind CSS:** Framework de CSS orientado a utilidades. Se instaló para construir una interfaz moderna, 
+limpia y responsive sin la necesidad de escribir y mantener archivos CSS gigantes. Permite aplicar estilos 
+directamente en las clases de los componentes React.
+*   **ESLint:** Herramienta para analizar de forma estática el código JavaScript y React. Se configuró para m
+antener un estilo de codificación consistente y detectar posibles errores o malas prácticas antes de siquiera 
+ejecutar el código.
