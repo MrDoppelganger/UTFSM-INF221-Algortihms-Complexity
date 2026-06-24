@@ -1,5 +1,14 @@
-\begin{mdframed}
-    \textbf{La extensión máxima para esta sección es de media página.}
-\end{mdframed}
+Los experimentos fueron ejecutados en un entorno bajo el sistema operativo Ubuntu 22.04.5 LTS (WSL2 o Nativo).
+Esta cuenta con un procesador AMD Ryzen 5300U con AMD Radeon Graphics x8, 8 GB de RAM y disco sólido de 256 GB.
+Todo el código fuente fue desarrollado en \texttt{C++}, siendo compilado con \texttt{g++} apoyándose en un
+Makefile que automatizó los procesos de limpieza, construcción, generación de casos de prueba y ejecución
+de mediciones. Una decisión técnica de gran relevancia fue aislar el consumo de memoria mediante llamadas
+al sistema operativo (\texttt{fork} y \texttt{wait4}), lo cual nos permitió utilizar \texttt{getrusage()}
+para obtener el pico de memoria (\texttt{Maximum Resident Set Size}) verdaderamente originado por cada algoritmo,
+ sin verse afectado por la memoria dinámica alojada durante la lectura de los datos de entrada o ejecuciones anteriores.
 
-Especifique el hardware y software utilizado para realizar los experimentos (por ejemplo, procesador, memoria RAM, sistema operativo, compilador y versión). Incluya una mención breve de los datasets utilizados, los cuales son los descritos en el enunciado de la tarea.
+Para los datasets de evaluación, se implementó el script \texttt{testcases\_generator.py} según las instrucciones del
+enunciado, capaz de producir escenarios variados. Se generaron casos pequeños (donde $N < 15$) utilizados para contrastar
+Fuerza Bruta contra Programación Dinámica (DP), y casos medianos a grandes (con $N$ rondando los $100$ y hasta cientos de
+capítulos en total) pensados para exponer las diferencias de tiempo, memoria y porcentaje de optimalidad entre DP y los
+enfoques Greedy.

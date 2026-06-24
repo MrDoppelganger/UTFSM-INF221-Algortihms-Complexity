@@ -23,7 +23,7 @@ levantar las pruebas y el entorno completo del proyecto.
 │   │   ├── data/                           # Datos generados (measurements, outputs, plots).
 │   │   └── scripts/                        # Scripts Python (Generador de casos, gráficos).
 │   └── README.md                           # Documentación específica de la implementación.
-├── Docs/                                   # Documentos extras e ideas del proyecto.
+├── Docs/                                   # Documentos extras.
 ├── report/                                 # Informe final y código LaTeX.
 └── README.md                               # Este documento.
 ```
@@ -63,3 +63,5 @@ la entrada y salida de datos (lectura de `.txt` y escritura a archivos `.csv`).
  ejecutar la medición de memoria de cada algoritmo de manera completamente aislada en procesos hijos, evitando
 que el consumo de memoria dinámico generado por ejecuciones previas (o por la propia lectura del caso de prueba)
 afecte a las demás, obteniendo así métricas de memoria mas precisas para el análisis.
+
+* **Repo:** [link](https://github.com/MrDoppelganger/UTFSM-INF221-Algortihms-Complexity.git)
